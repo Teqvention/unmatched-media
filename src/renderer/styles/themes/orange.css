@@ -1,0 +1,26 @@
+/* 
+=========================================
+Color palettes (shadcn theme options)
+Use with: <html data-palette="blue"> etc.
+========================================= 
+*/
+
+/* ORANGE (this is effectively your “amber” option) */
+:root[data-palette="orange"] {
+  --primary: oklch(0.705 0.213 47.604);
+  --primary-foreground: oklch(0.98 0.016 73.684);
+  --ring: oklch(0.705 0.213 47.604);
+
+  --sidebar-primary: oklch(0.705 0.213 47.604);
+  --sidebar-primary-foreground: oklch(0.98 0.016 73.684);
+  --sidebar-ring: oklch(0.705 0.213 47.604);
+}
+.dark[data-palette="orange"] {
+  --primary: oklch(0.646 0.222 41.116);
+  --primary-foreground: oklch(0.98 0.016 73.684);
+  --ring: oklch(0.646 0.222 41.116);
+
+  --sidebar-primary: oklch(0.646 0.222 41.116);
+  --sidebar-primary-foreground: oklch(0.98 0.016 73.684);
+  --sidebar-ring: oklch(0.646 0.222 41.116);
+}

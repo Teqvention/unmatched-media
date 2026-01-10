@@ -1,0 +1,26 @@
+/* 
+=========================================
+Color palettes (shadcn theme options)
+Use with: <html data-palette="blue"> etc.
+========================================= 
+*/
+
+/* GREEN (aka “emerald”) */
+:root[data-palette="green"] {
+  --primary: oklch(0.723 0.219 149.579);
+  --primary-foreground: oklch(0.982 0.018 155.826);
+  --ring: oklch(0.723 0.219 149.579);
+
+  --sidebar-primary: oklch(0.723 0.219 149.579);
+  --sidebar-primary-foreground: oklch(0.982 0.018 155.826);
+  --sidebar-ring: oklch(0.723 0.219 149.579);
+}
+.dark[data-palette="green"] {
+  --primary: oklch(0.696 0.17 162.48);
+  --primary-foreground: oklch(0.982 0.018 155.826);
+  --ring: oklch(0.696 0.17 162.48);
+
+  --sidebar-primary: oklch(0.696 0.17 162.48);
+  --sidebar-primary-foreground: oklch(0.982 0.018 155.826);
+  --sidebar-ring: oklch(0.696 0.17 162.48);
+}

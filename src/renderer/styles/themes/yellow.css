@@ -1,0 +1,26 @@
+/* 
+=========================================
+Color palettes (shadcn theme options)
+Use with: <html data-palette="blue"> etc.
+========================================= 
+*/
+
+/* YELLOW (if you want it super close to shadcn’s “gold” vibe) */
+:root[data-palette="yellow"] {
+  --primary: oklch(0.828 0.189 84.429);
+  --primary-foreground: oklch(0.205 0 0);
+  --ring: oklch(0.828 0.189 84.429);
+
+  --sidebar-primary: oklch(0.828 0.189 84.429);
+  --sidebar-primary-foreground: oklch(0.205 0 0);
+  --sidebar-ring: oklch(0.828 0.189 84.429);
+}
+.dark[data-palette="yellow"] {
+  --primary: oklch(0.828 0.189 84.429);
+  --primary-foreground: oklch(0.205 0 0);
+  --ring: oklch(0.828 0.189 84.429);
+
+  --sidebar-primary: oklch(0.828 0.189 84.429);
+  --sidebar-primary-foreground: oklch(0.205 0 0);
+  --sidebar-ring: oklch(0.828 0.189 84.429);
+}

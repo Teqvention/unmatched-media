@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { BreadcrumbGenerator } from "@/components/breadcrumb-generator";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { Providers } from "./providers";
 
 import "../styles/globals.css";
 
@@ -31,13 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
+        <Providers>
           <AppSidebar />
           <main className="flex min-h-screen w-full flex-col">
             <BreadcrumbGenerator />
             {children}
           </main>
-        </SidebarProvider>
+        </Providers>
       </body>
     </html>
   );

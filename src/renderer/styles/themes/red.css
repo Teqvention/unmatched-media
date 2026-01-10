@@ -1,0 +1,26 @@
+/* 
+=========================================
+Color palettes (shadcn theme options)
+Use with: <html data-palette="blue"> etc.
+========================================= 
+*/
+
+/* RED */
+:root[data-palette="red"] {
+  --primary: oklch(0.637 0.237 25.331);
+  --primary-foreground: oklch(0.971 0.013 17.38);
+  --ring: oklch(0.637 0.237 25.331);
+
+  --sidebar-primary: oklch(0.637 0.237 25.331);
+  --sidebar-primary-foreground: oklch(0.971 0.013 17.38);
+  --sidebar-ring: oklch(0.637 0.237 25.331);
+}
+.dark[data-palette="red"] {
+  --primary: oklch(0.637 0.237 25.331);
+  --primary-foreground: oklch(0.971 0.013 17.38);
+  --ring: oklch(0.637 0.237 25.331);
+
+  --sidebar-primary: oklch(0.637 0.237 25.331);
+  --sidebar-primary-foreground: oklch(0.971 0.013 17.38);
+  --sidebar-ring: oklch(0.637 0.237 25.331);
+}
