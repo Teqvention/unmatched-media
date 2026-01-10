@@ -7,17 +7,23 @@
     "dev": "concurrently \"pnpm dev:next\" \"pnpm dev:electron\"",
     "dev:next": "next dev src/renderer -p 3000",
     "dev:electron": "wait-on http://localhost:3000 && cross-env NODE_ENV=development pnpm exec electron .",
-
     "build": "pnpm run build:next && pnpm run build:electron",
     "build:next": "next build src/renderer",
     "build:electron": "electron-builder",
-
     "start": "next start src/renderer -p 3000",
     "lint": "next lint src/renderer",
     "prepare": "husky"
   },
   "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.11",
+    "@radix-ui/react-collapsible": "^1.1.12",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tooltip": "^1.2.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",
