@@ -6,7 +6,7 @@ import { NotificationsTabView } from "./_tabs/notifications";
 import { ProfileTabView } from "./_tabs/profile";
 
 export const metadata: Metadata = {
-  title: "My Next Page",
+  title: "Teqvention - Settings",
 };
 
 const tabs: ViewTabItem[] = [
