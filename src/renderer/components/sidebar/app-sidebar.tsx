@@ -42,11 +42,11 @@ const navigation = {
     },
   ],
   links: [
-    { name: "Dashboard", url: "#", icon: ChartSpline },
-    { name: "Chat", url: "#", icon: MessageCircle },
-    { name: "Manage Users", url: "#", icon: Users },
-    { name: "Automation", url: "#", icon: Workflow },
-    { name: "Bot", url: "#", icon: Bot },
+    { name: "Dashboard", url: "/", icon: ChartSpline },
+    { name: "Chat", url: "/chat", icon: MessageCircle },
+    { name: "Manage Users", url: "/users", icon: Users },
+    { name: "Automation", url: "/automation", icon: Workflow },
+    { name: "Bot", url: "/bot", icon: Bot },
   ],
 };
 
