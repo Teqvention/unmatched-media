@@ -10,6 +10,9 @@
 @import "./themes/violet.css";
 @import "./themes/yellow.css";
 
+/* import all tone files */
+@import "./tones/index.css";
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

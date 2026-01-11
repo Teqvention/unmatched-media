@@ -1,10 +1,10 @@
+import "../styles/globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { BreadcrumbGenerator } from "@/components/breadcrumb-generator";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Providers } from "./providers";
-
-import "../styles/globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,6 +21,17 @@ export const metadata: Metadata = {
   description: "Manage and deploy AI-powered media bots with ease.",
 };
 
+const THEME_INIT = `
+(function () {
+  try {
+    var base = localStorage.getItem("base") || "slate";
+    var palette = localStorage.getItem("palette") || "neutral";
+    document.documentElement.dataset.base = base;
+    document.documentElement.dataset.palette = palette;
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,6 +39,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: <>
+          dangerouslySetInnerHTML={{ __html: THEME_INIT }}
+          id="theme-init"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} max-h-screen w-screen overflow-hidden antialiased`}
       >

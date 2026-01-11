@@ -7,10 +7,9 @@ import {
   UserSearch,
   Users,
 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation"; // ✅ fix import
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { PageWrapper } from "@/components/page-wrapper";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { type ViewTabItem, ViewTabs } from "@/components/view-tabs";
 import {
   type BotLogItem,
@@ -19,6 +18,7 @@ import {
   type BotViewTabProps,
 } from "@/types/views/bot";
 import { StatusPip } from "./_components/status-pip";
+import { UserProfileSelect } from "./_components/user-profile-select";
 import { CreatorTabView } from "./_tabs/creator";
 import { FollowersTabView } from "./_tabs/followers";
 import { ForYouTabView } from "./_tabs/for-you";
@@ -38,11 +38,27 @@ const TIME_FMT = new Intl.DateTimeFormat("en-GB", {
 });
 const formatTime = (iso: string) => TIME_FMT.format(new Date(iso));
 
+const USERS = [
+  {
+    id: "u1",
+    name: "Paulos",
+    email: "paulos@company.com",
+    avatarUrl: "/avatar_placeholder.png",
+  },
+  {
+    id: "u2",
+    name: "Inês",
+    email: "ines@company.com",
+    avatarUrl: "/avatar_placeholder.png",
+  },
+  { id: "u3", name: "Tiago", email: "tiago@company.com" },
+];
+
 export function Content({ tab }: { tab?: string }) {
   const router = useRouter();
   const sp = useSearchParams();
 
-  const [_selectedUser, setSelectedUser] = useState<string>("sophie");
+  const [userId, setUserId] = useState(USERS[0].id);
 
   const [state, setState] = useState<Record<string, BotModuleState>>({
     write_news: BotModuleState.Active,
@@ -103,9 +119,6 @@ export function Content({ tab }: { tab?: string }) {
     log,
     pushLog,
     clearLog,
-    // optional: if you want tab views to know which account is selected,
-    // add selectedUser to the type and pass it here.
-    // selectedUser,
   };
 
   const tabs: ViewTabItem[] = [
@@ -199,32 +212,20 @@ export function Content({ tab }: { tab?: string }) {
     router.replace(`?${next.toString()}`, { scroll: false });
   };
 
-  const userItem = (name: string, src: string, key: string) => ({
-    key,
-    label: name,
-    icon: (
-      <Avatar className="size-7">
-        <AvatarImage alt={name} src={src} />
-        <AvatarFallback>{name.slice(0, 1).toUpperCase()}</AvatarFallback>
-      </Avatar>
-    ),
-    onSelect: () => setSelectedUser(key), // ✅ now exists
-  });
-
   return (
     <PageWrapper>
       <ViewTabs
         activeKey={activeTab}
         className="h-full"
-        dropdown={{
-          trigger: "Select user",
-          items: [
-            { type: "label", key: "lbl", label: "Accounts" },
-            userItem("Sophie", "/avatars/sophie.jpg", "sophie"),
-            userItem("Lotta", "/avatars/lotta.jpg", "lotta"),
-            userItem("Hannah", "/avatars/hannah.jpg", "hannah"),
-          ],
-        }}
+        dropdown={
+          <UserProfileSelect
+            onChange={(u) => {
+              setUserId(u.id);
+            }}
+            users={USERS}
+            value={userId}
+          />
+        }
         keepMounted
         navClassName="w-72 bg-card relative"
         onActiveKeyChange={onTabChange}

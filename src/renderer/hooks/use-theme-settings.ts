@@ -1,11 +1,26 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-export const PALETTE_KEY = "palette";
+export type PaletteKey =
+  | "neutral"
+  | "blue"
+  | "green"
+  | "red"
+  | "rose"
+  | "violet"
+  | "yellow";
 
-export const PALETTES = [
+export type BaseKey =
+  | "slate"
+  | "zinc"
+  | "gray"
+  | "neutral"
+  | "stone"
+  | "chrome";
+
+export const PALETTES: Array<{ key: PaletteKey; label: string }> = [
   { key: "neutral", label: "Neutral" },
   { key: "blue", label: "Blue" },
   { key: "green", label: "Green" },
@@ -13,111 +28,107 @@ export const PALETTES = [
   { key: "rose", label: "Rose" },
   { key: "violet", label: "Violet" },
   { key: "yellow", label: "Yellow" },
-] as const;
+];
 
-export type PaletteKey = (typeof PALETTES)[number]["key"];
-export type Mode = "light" | "dark" | "system";
+export const BASES: Array<{
+  key: BaseKey;
+  label: string;
+  description?: string;
+}> = [
+  { key: "slate", label: "Slate", description: "Cool, modern" },
+  { key: "zinc", label: "Zinc", description: "Clean, neutral-cool" },
+  { key: "gray", label: "Gray", description: "Classic" },
+  { key: "neutral", label: "Neutral", description: "Most neutral" },
+  { key: "stone", label: "Stone", description: "Warm, earthy" },
+  { key: "chrome", label: "Chrome", description: "Slick, high-contrast" }, // your custom one
+];
 
-function applyPalette(palette: PaletteKey) {
-  const root = document.documentElement;
+const PALETTE_KEY = "palette";
+const BASE_KEY = "base";
 
-  if (palette === "neutral") {
-    root.removeAttribute("data-palette");
-    localStorage.removeItem(PALETTE_KEY);
-    return;
-  }
+const DEFAULT_PALETTE: PaletteKey = "neutral";
+const DEFAULT_BASE: BaseKey = "slate";
 
-  root.setAttribute("data-palette", palette);
-  localStorage.setItem(PALETTE_KEY, palette);
-}
-
-function readPalette(): PaletteKey {
-  const saved = localStorage.getItem(PALETTE_KEY);
-  const keys = PALETTES.map((p) => p.key);
-  return keys.includes(saved as PaletteKey) ? (saved as PaletteKey) : "neutral";
-}
-
-interface UseThemeSettingsOptions {
-  defaultPalette?: PaletteKey;
-  syncAcrossTabs?: boolean;
-}
-
-export function useThemeSettings(options: UseThemeSettingsOptions = {}) {
-  const { theme, setTheme, resolvedTheme, systemTheme } = useTheme();
-
-  const defaultPalette = options.defaultPalette ?? "neutral";
+export function useThemeSettings() {
+  const { theme, setTheme } = useTheme();
 
   const [mounted, setMounted] = useState(false);
-  const [palette, setPaletteState] = useState<PaletteKey>(defaultPalette);
-
-  // Mark mounted (avoids SSR/hydration edge cases)
   useEffect(() => setMounted(true), []);
 
-  // On app boot (page refresh), re-apply saved palette
+  const [palette, setPaletteState] = useState<PaletteKey>(DEFAULT_PALETTE);
+  const [base, setBaseState] = useState<BaseKey>(DEFAULT_BASE);
+
+  // read stored values on mount
   useEffect(() => {
     if (!mounted) {
       return;
     }
-    const p = readPalette();
-    setPaletteState(p);
-    applyPalette(p);
+
+    try {
+      const storedPalette = localStorage.getItem(
+        PALETTE_KEY
+      ) as PaletteKey | null;
+      if (storedPalette && PALETTES.some((p) => p.key === storedPalette)) {
+        setPaletteState(storedPalette);
+      }
+
+      const storedBase = localStorage.getItem(BASE_KEY) as BaseKey | null;
+      if (storedBase && BASES.some((b) => b.key === storedBase)) {
+        setBaseState(storedBase);
+      }
+    } catch {
+      /**/
+    }
   }, [mounted]);
 
-  const setMode = useCallback(
-    (m: Mode) => {
-      setTheme(m);
-    },
-    [setTheme]
-  );
-
-  const setPalette = useCallback((p: PaletteKey) => {
-    setPaletteState(p);
-    applyPalette(p);
-  }, []);
-
-  const resetPalette = useCallback(() => {
-    setPalette("neutral");
-  }, [setPalette]);
-
-  // Optional: keep multiple tabs in sync
+  // apply + persist palette
   useEffect(() => {
-    if (!(mounted && options.syncAcrossTabs)) {
+    if (!mounted) {
       return;
     }
+    try {
+      document.documentElement.dataset.palette = palette;
+      localStorage.setItem(PALETTE_KEY, palette);
+    } catch {
+      /**/
+    }
+  }, [palette, mounted]);
 
-    const onStorage = (e: StorageEvent) => {
-      if (e.key !== PALETTE_KEY) {
-        return;
-      }
-      const p = readPalette();
-      setPaletteState(p);
-      applyPalette(p);
-    };
+  // apply + persist base
+  useEffect(() => {
+    if (!mounted) {
+      return;
+    }
+    try {
+      document.documentElement.dataset.base = base;
+      localStorage.setItem(BASE_KEY, base);
+    } catch {
+      /**/
+    }
+  }, [base, mounted]);
 
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [mounted, options.syncAcrossTabs]);
+  const mode = (theme ?? "system") as "light" | "dark" | "system";
+  const setMode = (m: "light" | "dark" | "system") => setTheme(m);
 
-  const mode = useMemo<Mode>(() => {
-    // next-themes can return undefined during hydration
-    return (theme ?? "system") as Mode;
-  }, [theme]);
+  const setPalette = (k: PaletteKey) => setPaletteState(k);
+  const resetPalette = () => setPaletteState(DEFAULT_PALETTE);
+  const setBase = (k: BaseKey) => setBaseState(k);
+  const resetBase = () => setBaseState(DEFAULT_BASE);
 
   return {
     mounted,
 
-    // mode
     mode,
     setMode,
-    resolvedTheme, // "light" | "dark" (helpful for UI if you need it)
-    systemTheme,
 
-    // palette
     palette,
     setPalette,
     resetPalette,
-
-    // constants (handy in components)
     PALETTES,
+
+    base,
+    setBase,
+    resetBase,
+    BASES,
   };
 }
