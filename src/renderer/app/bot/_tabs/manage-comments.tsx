@@ -1,9 +1,9 @@
 "use client";
 
 import { SplitPane } from "@/components/split-pane";
+import type { BotViewTabProps } from "@/types/views/bot";
 import { ActivityLog } from "../_components/activity-log";
 import { ManageCommentsCard } from "../_components/manage-comments-card";
-import type { BotViewTabProps } from "../_types/tabs";
 
 export function ManageCommentsTabView({
   log,

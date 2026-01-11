@@ -2,6 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "./ui/scroll-area";
 
 export interface ViewTabItem {
   key: string;
@@ -119,27 +120,22 @@ export function ViewTabs({
   return (
     <div className={cn("flex w-full flex-1 flex-col", className)}>
       {/* BODY */}
-      <div className="flex flex-1">
+      <div className="flex max-h-[calc(100svh-(--spacing(24)))] flex-1 divide-x overflow-hidden rounded-lg border">
         {/* LEFT NAV */}
         <nav
           aria-label={navAriaLabel}
-          className={cn(
-            "w-64 shrink-0 rounded-s-lg border border-r-0 bg-card",
-            navClassName
-          )}
+          className={cn("w-64 shrink-0 divide-y bg-card", navClassName)}
         >
-          {/* <div className="border-b px-4 py-3 font-medium text-muted-foreground text-sm">
-            Sections
-          </div> */}
+          {/* {dropdown ? <ViewTabsDropdown dropdown={dropdown} /> : null} */}
 
-          <div className="flex flex-col gap-2 p-2">
+          <div className="sticky top-0 flex flex-col gap-0 divide-y border-b bg-card">
             {tabs.map((t) => {
               const isActive = t.key === currentKey;
 
               return (
                 <button
                   className={cn(
-                    "group relative w-full rounded-lg px-3 py-2 text-left transition",
+                    "group relative w-full rounded-none px-4 py-2 text-left transition",
                     "disabled:cursor-not-allowed disabled:opacity-50",
                     "hover:bg-foreground/10",
 
@@ -154,7 +150,7 @@ export function ViewTabs({
                   {/* Accent rail on the RIGHT, aligned with the nav/content divider */}
                   <span
                     className={cn(
-                      "pointer-events-none absolute top-2 -right-2.5 bottom-2 w-0.75 rounded-full",
+                      "pointer-events-none absolute top-0 bottom-0 left-0 w-0.75",
                       "transition-opacity",
                       isActive
                         ? "bg-primary opacity-100"
@@ -165,20 +161,20 @@ export function ViewTabs({
                   {/* Active background (subtle) */}
                   <div
                     className={cn(
-                      "absolute inset-0 rounded-lg transition",
-                      isActive ? "bg-foreground/5" : "bg-transparent"
+                      "absolute inset-0 rounded-none transition",
+                      isActive ? "bg-primary/15" : "bg-transparent"
                     )}
                   />
 
                   {/* Content (keep above the overlay) */}
                   <div className="relative flex items-center justify-between gap-3">
-                    <div className="flex min-w-0 items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-4">
                       {t.icon ? (
                         <span
                           className={cn(
                             "shrink-0 transition-colors",
                             isActive
-                              ? "text-primary"
+                              ? "text-foreground"
                               : "text-muted-foreground group-hover:text-foreground"
                           )}
                         >
@@ -209,14 +205,14 @@ export function ViewTabs({
         </nav>
 
         {/* RIGHT CONTENT */}
-        <section
+        <ScrollArea
           className={cn(
-            "min-h-75 flex-1 rounded-e-lg border bg-card p-4",
+            "max-h-[calc(100svh-(--spacing(24)))] min-h-75 flex-1 bg-card p-0",
             contentClassName
           )}
         >
-          {activeTab ? renderContent() : null}
-        </section>
+          <div className="h-full p-4">{activeTab ? renderContent() : null}</div>
+        </ScrollArea>
       </div>
     </div>
   );
@@ -247,3 +243,150 @@ export function ViewTabs({
     return activeTab.content;
   }
 }
+
+// function isSeparator(
+//   item: ViewDropdownItem
+// ): item is Extract<ViewDropdownItem, { type: "separator" }> {
+//   return item.type === "separator";
+// }
+
+// function isLabel(
+//   item: ViewDropdownItem
+// ): item is Extract<ViewDropdownItem, { type: "label" }> {
+//   return item.type === "label";
+// }
+
+// function isItem(
+//   item: ViewDropdownItem
+// ): item is Extract<ViewDropdownItem, { onSelect: () => void }> {
+//   return "onSelect" in item;
+// }
+
+// interface DropdownGroup {
+//   key: string;
+//   label?: ReactNode;
+//   items: Extract<ViewDropdownItem, { onSelect: () => void }>[];
+// }
+
+// function buildDropdownGroups(items: ViewDropdownItem[]) {
+//   const blocks: Array<
+//     { type: "group"; group: DropdownGroup } | { type: "sep"; key: string }
+//   > = [];
+
+//   let current: DropdownGroup | null = null;
+//   let groupIndex = 0;
+
+//   const flush = () => {
+//     if (current && (current.label || current.items.length > 0)) {
+//       blocks.push({ type: "group", group: current });
+//     }
+//     current = null;
+//   };
+
+//   for (const it of items) {
+//     if (isSeparator(it)) {
+//       flush();
+//       blocks.push({ type: "sep", key: it.key });
+//       continue;
+//     }
+
+//     if (isLabel(it)) {
+//       flush();
+//       current = {
+//         key: `group-${it.key}-${groupIndex++}`,
+//         label: it.label,
+//         items: [],
+//       };
+//       continue;
+//     }
+
+//     // selectable item
+//     if (isItem(it)) {
+//       if (!current) {
+//         current = { key: `group-auto-${groupIndex++}`, items: [] };
+//       }
+//       current.items.push(it);
+//     }
+//   }
+
+//   flush();
+//   return blocks;
+// }
+
+// function ViewTabsDropdown({ dropdown }: { dropdown: ViewDropdown }) {
+//   const selectable = dropdown.items.filter(isItem);
+
+//   const [value, setValue] = useState<string>(() => selectable[0]?.key ?? "");
+
+//   useEffect(() => {
+//     if (!selectable.some((x) => x.key === value)) {
+//       setValue(selectable[0]?.key ?? "");
+//     }
+//   }, [selectable, value]);
+
+//   const selected = selectable.find((x) => x.key === value);
+
+//   const blocks = buildDropdownGroups(dropdown.items);
+
+//   return (
+//     <div>
+//       <Select
+//         onValueChange={(next) => {
+//           setValue(next);
+//           selectable.find((x) => x.key === next)?.onSelect();
+//         }}
+//         value={value}
+//       >
+//         <SelectTrigger className="h-14 justify-between">
+//           {/* Trigger content (avatar + name) */}
+//           {selected ? (
+//             <div className="flex min-w-0 items-center gap-3">
+//               {selected.icon ? (
+//                 <span className="shrink-0">{selected.icon}</span>
+//               ) : null}
+//               <div className="min-w-0">
+//                 <div className="truncate font-medium text-sm">
+//                   {selected.label}
+//                 </div>
+//               </div>
+//             </div>
+//           ) : (
+//             <div className="text-muted-foreground text-sm">
+//               {dropdown.trigger}
+//             </div>
+//           )}
+//         </SelectTrigger>
+
+//         <SelectContent align={dropdown.align ?? "start"}>
+//           {blocks.map((b) => {
+//             if (b.type === "sep") {
+//               return <SelectSeparator key={b.key} />;
+//             }
+
+//             const g = b.group;
+//             return (
+//               <SelectGroup key={g.key}>
+//                 {g.label ? <SelectLabel>{g.label}</SelectLabel> : null}
+
+//                 {g.items.map((item) => (
+//                   <SelectItem
+//                     disabled={item.disabled}
+//                     key={item.key}
+//                     value={item.key}
+//                   >
+//                     <div className="flex items-center gap-3">
+//                       {item.icon ? (
+//                         <span className="shrink-0">{item.icon}</span>
+//                       ) : null}
+//                       <span className="truncate">{item.label}</span>
+//                     </div>
+//                   </SelectItem>
+//                 ))}
+//               </SelectGroup>
+//             );
+//           })}
+//         </SelectContent>
+//       </Select>
+//     </div>
+//   );
+// }

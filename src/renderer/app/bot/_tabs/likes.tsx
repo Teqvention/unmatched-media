@@ -1,10 +1,10 @@
 "use client";
 
 import { SplitPane } from "@/components/split-pane";
+import { BotModuleState, type BotViewTabProps } from "@/types/views/bot";
 import { ActivityLog } from "../_components/activity-log";
 import { BotViewCard } from "../_components/bot-view-card";
 import { StartStop } from "../_components/start-stop";
-import type { BotViewTabProps } from "../_types/tabs";
 
 export function LikesTabView({
   state,
@@ -27,14 +27,14 @@ export function LikesTabView({
 
             <StartStop
               onStart={() => {
-                setState((s) => ({ ...s, likes: "running" }));
+                setState((s) => ({ ...s, likes: BotModuleState.Active }));
                 pushLog("info", "Likes scrape started.");
               }}
               onStop={() => {
-                setState((s) => ({ ...s, likes: "on" }));
-                pushLog("warn", "Likes scrape stopped.");
+                setState((s) => ({ ...s, likes: BotModuleState.Inactive }));
+                pushLog("warning", "Likes scrape stopped.");
               }}
-              running={state.likes === "running"}
+              running={state.likes === BotModuleState.Active}
             />
           </div>
         </BotViewCard>

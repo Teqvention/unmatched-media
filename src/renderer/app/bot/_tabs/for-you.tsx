@@ -1,11 +1,10 @@
 import { Bot, Settings2, Users } from "lucide-react";
 import { SplitPane } from "@/components/split-pane";
+import { BotModuleState, type BotViewTabProps } from "@/types/views/bot";
 import { ActivityLog } from "../_components/activity-log";
 import { BotViewCard } from "../_components/bot-view-card";
 import { StartStop } from "../_components/start-stop";
 import { StatPill } from "../_components/stat-pill";
-import { StatusPip } from "../_components/status-pip";
-import type { BotViewTabProps } from "../_types/tabs";
 
 export function ForYouTabView({
   state,
@@ -27,7 +26,7 @@ export function ForYouTabView({
             <StatPill
               icon={<Bot className="size-4 text-muted-foreground" />}
               label="State"
-              value={<StatusPip state={state.foryou} />}
+              value={state.foryou}
             />
             <StatPill
               icon={<Settings2 className="size-4 text-muted-foreground" />}
@@ -47,14 +46,14 @@ export function ForYouTabView({
 
               <StartStop
                 onStart={() => {
-                  setState((s) => ({ ...s, foryou: "running" }));
+                  setState((s) => ({ ...s, foryou: BotModuleState.Active }));
                   pushLog("info", "ForYou scrape started.");
                 }}
                 onStop={() => {
-                  setState((s) => ({ ...s, foryou: "on" }));
-                  pushLog("warn", "ForYou scrape stopped.");
+                  setState((s) => ({ ...s, foryou: BotModuleState.Inactive }));
+                  pushLog("warning", "ForYou scrape stopped.");
                 }}
-                running={state.foryou === "running"}
+                running={state.foryou === BotModuleState.Active}
               />
             </div>
           </BotViewCard>

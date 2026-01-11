@@ -1,6 +1,11 @@
-export type BotModuleState = "off" | "on" | "running" | "error";
+// biome-ignore lint/style/noEnum: <>
+export enum BotModuleState {
+  Active = "active",
+  Inactive = "inactive",
+  Error = "error",
+}
 
-export type BotLogLevel = "success" | "warn" | "error" | "info";
+export type BotLogLevel = "success" | "warning" | "error" | "info";
 
 export interface BotLogItem {
   id: string;

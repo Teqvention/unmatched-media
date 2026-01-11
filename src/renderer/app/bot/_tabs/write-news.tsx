@@ -6,12 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { BotModuleState, type WriteNewsTabProps } from "@/types/views/bot";
 import { ActivityLog } from "../_components/activity-log";
 import { BotViewCard } from "../_components/bot-view-card";
 import { StartStop } from "../_components/start-stop";
 import { StatPill } from "../_components/stat-pill";
-import { StatusPip } from "../_components/status-pip";
-import type { WriteNewsTabProps } from "../_types/tabs";
 
 export function WriteNewsTabView({
   state,
@@ -40,7 +39,7 @@ export function WriteNewsTabView({
             <StatPill
               icon={<Bot className="size-4 text-muted-foreground" />}
               label="Bot"
-              value={<StatusPip state={state.write_news} />}
+              value={state.write_news}
             />
           </div>
 
@@ -55,14 +54,20 @@ export function WriteNewsTabView({
 
               <StartStop
                 onStart={() => {
-                  setState((s) => ({ ...s, write_news: "running" }));
+                  setState((s) => ({
+                    ...s,
+                    write_news: BotModuleState.Active,
+                  }));
                   pushLog("info", "Write news started.");
                 }}
                 onStop={() => {
-                  setState((s) => ({ ...s, write_news: "on" }));
-                  pushLog("warn", "Write news stopped.");
+                  setState((s) => ({
+                    ...s,
+                    write_news: BotModuleState.Inactive,
+                  }));
+                  pushLog("warning", "Write news stopped.");
                 }}
-                running={state.write_news === "running"}
+                running={state.write_news === BotModuleState.Active}
                 startLabel="Start"
                 stopLabel="Stop"
               />
@@ -112,18 +117,7 @@ export function WriteNewsTabView({
         </>
       }
       right={
-        <ActivityLog
-          actions={
-            <div className="inline-flex items-center gap-2 rounded-md border bg-card px-2 py-1">
-              <StatusPip
-                state={state.write_news === "running" ? "running" : "on"}
-              />
-            </div>
-          }
-          items={log}
-          onClear={clearLog}
-          title="Bot activity"
-        />
+        <ActivityLog items={log} onClear={clearLog} title="Bot activity" />
       }
     />
   );

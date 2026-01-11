@@ -1,10 +1,10 @@
 "use client";
 
 import { SplitPane } from "@/components/split-pane";
+import { BotModuleState, type BotViewTabProps } from "@/types/views/bot";
 import { ActivityLog } from "../_components/activity-log";
 import { BotViewCard } from "../_components/bot-view-card";
 import { StartStop } from "../_components/start-stop";
-import type { BotViewTabProps } from "../_types/tabs";
 
 export function WriteCommentsTabView({
   state,
@@ -27,14 +27,20 @@ export function WriteCommentsTabView({
 
             <StartStop
               onStart={() => {
-                setState((s) => ({ ...s, write_comments: "running" }));
+                setState((s) => ({
+                  ...s,
+                  write_comments: BotModuleState.Active,
+                }));
                 pushLog("info", "Comments writer started.");
               }}
               onStop={() => {
-                setState((s) => ({ ...s, write_comments: "on" }));
-                pushLog("warn", "Comments writer stopped.");
+                setState((s) => ({
+                  ...s,
+                  write_comments: BotModuleState.Inactive,
+                }));
+                pushLog("warning", "Comments writer stopped.");
               }}
-              running={state.write_comments === "running"}
+              running={state.write_comments === BotModuleState.Active}
             />
           </div>
         </BotViewCard>

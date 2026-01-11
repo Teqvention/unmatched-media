@@ -10,6 +10,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import { type ChangeEvent, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -26,6 +27,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 interface UserProfile {
@@ -80,17 +89,6 @@ function DeviceIcon({ type }: { type: LoginSession["deviceType"] }) {
   return <Laptop className={cls} />;
 }
 
-function Stat({ label, value }: { label: string; value?: string }) {
-  return (
-    <div className="min-w-0">
-      <div className="text-muted-foreground text-xs uppercase tracking-wide">
-        {label}
-      </div>
-      <div className="truncate font-medium text-sm">{value ?? "—"}</div>
-    </div>
-  );
-}
-
 export function ProfileTabView({
   user = {
     name: "Tim Müller",
@@ -127,7 +125,9 @@ export function ProfileTabView({
   onSaveProfile,
   onUploadAvatar,
   onChangePassword,
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: <>
   onSignOutSession,
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: <>
   onSignOutAll,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -182,194 +182,196 @@ export function ProfileTabView({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* PROFILE HEADER CARD (like your screenshot) */}
-      <Card className="p-6 md:p-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-5">
-            <div className="relative">
-              <Avatar className="size-20">
-                <AvatarImage alt={user.name} src={user.avatarUrl ?? ""} />
-                <AvatarFallback className="text-lg">
-                  {initials(user.name)}
-                </AvatarFallback>
-              </Avatar>
+      <Card className="gap-4 p-6 md:p-8">
+        {/* Profile */}
+        <section className="space-y-4">
+          <div className="font-semibold text-2xl">Profile Settings</div>
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-5">
+              <div className="relative">
+                <Avatar className="size-20">
+                  <AvatarImage alt={user.name} src={user.avatarUrl ?? ""} />
+                  <AvatarFallback className="text-lg">
+                    {initials(user.name)}
+                  </AvatarFallback>
+                </Avatar>
 
-              {/* subtle “edit ring” vibe */}
-              <div className="pointer-events-none absolute -inset-1.5 rounded-full border border-primary/60 border-dashed" />
-            </div>
-
-            <div className="min-w-0">
-              <div className="truncate font-semibold text-2xl leading-tight">
-                {user.name}
-              </div>
-              <div className="truncate text-muted-foreground text-sm">
-                {user.email}
+                {/* subtle “edit ring” vibe */}
+                <div className="pointer-events-none absolute -inset-1.5 rounded-full border border-primary/60 border-dashed" />
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="h-10 rounded-md px-5">
-                      <Edit3 className="mr-2 size-4" />
-                      Edit profile
-                    </Button>
-                  </DialogTrigger>
+              <div className="min-w-0">
+                <div className="truncate font-semibold text-2xl leading-tight">
+                  {user.name}
+                </div>
+                <div className="truncate text-muted-foreground text-sm">
+                  {user.email}
+                </div>
 
-                  <DialogContent className="sm:max-w-130">
-                    <DialogHeader>
-                      <DialogTitle>Edit profile</DialogTitle>
-                      <DialogDescription>
-                        Update your name, email, and avatar.
-                      </DialogDescription>
-                    </DialogHeader>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="rounded-md">
+                        <Edit3 className="mr-2 size-4" />
+                        Edit profile
+                      </Button>
+                    </DialogTrigger>
 
-                    <div className="space-y-5">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="size-14">
-                            <AvatarImage
-                              alt={user.name}
-                              src={user.avatarUrl ?? ""}
+                    <DialogContent className="sm:max-w-130">
+                      <DialogHeader>
+                        <DialogTitle>Edit profile</DialogTitle>
+                        <DialogDescription>
+                          Update your name, email, and avatar.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <div className="space-y-5">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="size-14">
+                              <AvatarImage
+                                alt={user.name}
+                                src={user.avatarUrl ?? ""}
+                              />
+                              <AvatarFallback>
+                                {initials(user.name)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                              <div className="truncate font-medium text-sm">
+                                {user.name}
+                              </div>
+                              <div className="truncate text-muted-foreground text-xs">
+                                {user.email}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <Button
+                              onClick={() => fileInputRef.current?.click()}
+                              type="button"
+                              variant="outline"
+                            >
+                              Change avatar
+                            </Button>
+                            <input
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleAvatarPick}
+                              ref={fileInputRef}
+                              type="file"
                             />
-                            <AvatarFallback>
-                              {initials(user.name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="min-w-0">
-                            <div className="truncate font-medium text-sm">
-                              {user.name}
-                            </div>
-                            <div className="truncate text-muted-foreground text-xs">
-                              {user.email}
-                            </div>
                           </div>
                         </div>
 
-                        <div>
-                          <Button
-                            onClick={() => fileInputRef.current?.click()}
-                            type="button"
-                            variant="outline"
-                          >
-                            Change avatar
-                          </Button>
-                          <input
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleAvatarPick}
-                            ref={fileInputRef}
-                            type="file"
-                          />
+                        <Separator />
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label htmlFor="profile-name">Name</Label>
+                            <Input
+                              id="profile-name"
+                              onChange={(e) => setEditName(e.target.value)}
+                              value={editName}
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="profile-email">Email</Label>
+                            <Input
+                              id="profile-email"
+                              onChange={(e) => setEditEmail(e.target.value)}
+                              value={editEmail}
+                            />
+                          </div>
                         </div>
                       </div>
 
-                      <Separator />
-
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label htmlFor="profile-name">Name</Label>
-                          <Input
-                            id="profile-name"
-                            onChange={(e) => setEditName(e.target.value)}
-                            value={editName}
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="profile-email">Email</Label>
-                          <Input
-                            id="profile-email"
-                            onChange={(e) => setEditEmail(e.target.value)}
-                            value={editEmail}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <DialogFooter className="gap-2 sm:gap-2">
-                      <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                      </DialogClose>
-                      <Button
-                        disabled={savingProfile}
-                        onClick={handleSaveProfile}
-                      >
-                        {savingProfile ? "Saving..." : "Save changes"}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                      <DialogFooter className="gap-2 sm:gap-2">
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button
+                          disabled={savingProfile}
+                          onClick={handleSaveProfile}
+                        >
+                          {savingProfile ? "Saving..." : "Save changes"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
             </div>
+
+            {/* right side empty in screenshot — keep subtle balance */}
+            <div className="hidden md:block" />
           </div>
+        </section>
 
-          {/* right side empty in screenshot — keep subtle balance */}
-          <div className="hidden md:block" />
-        </div>
-      </Card>
+        {/* Change password */}
+        <section className="mt-2 space-y-4">
+          <div className="font-semibold text-2xl">Change password</div>
+          <div className="mt-5 grid gap-5 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword">Current password</Label>
+              <Input
+                className="h-11"
+                id="currentPassword"
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="••••••••"
+                type="password"
+                value={currentPassword}
+              />
+            </div>
 
-      {/* CHANGE PASSWORD CARD */}
-      <Card className="p-6 md:p-8">
-        <div className="font-semibold text-2xl">Change password</div>
-        <div className="mt-5 grid gap-5 md:grid-cols-3">
-          <div className="space-y-2">
-            <Label htmlFor="currentPassword">Current password</Label>
-            <Input
-              className="h-11"
-              id="currentPassword"
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="••••••••"
-              type="password"
-              value={currentPassword}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">New password</Label>
+              <Input
+                className="h-11"
+                id="newPassword"
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••"
+                type="password"
+                value={newPassword}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm new password</Label>
+              <Input
+                className={cn("h-11", passwordMismatch && "border-destructive")}
+                id="confirmPassword"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                type="password"
+                value={confirmPassword}
+              />
+              {passwordMismatch ? (
+                <p className="text-destructive text-xs">
+                  Passwords do not match.
+                </p>
+              ) : null}
+            </div>
           </div>
+        </section>
 
-          <div className="space-y-2">
-            <Label htmlFor="newPassword">New password</Label>
-            <Input
-              className="h-11"
-              id="newPassword"
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="••••••••"
-              type="password"
-              value={newPassword}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm new password</Label>
-            <Input
-              className={cn("h-11", passwordMismatch && "border-destructive")}
-              id="confirmPassword"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              type="password"
-              value={confirmPassword}
-            />
-            {passwordMismatch ? (
-              <p className="text-destructive text-xs">
-                Passwords do not match.
-              </p>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <Button
-            className="h-11 rounded-md px-6"
-            disabled={
-              savingPassword ||
-              !currentPassword ||
-              !newPassword ||
-              passwordMismatch
-            }
-            onClick={handleChangePassword}
-          >
-            <KeyRound className="mr-2 size-4" />
-            {savingPassword ? "Saving..." : "Save new password"}
-          </Button>
-        </div>
+        <Button
+          className="w-fit rounded-md"
+          disabled={
+            savingPassword ||
+            !currentPassword ||
+            !newPassword ||
+            passwordMismatch
+          }
+          onClick={handleChangePassword}
+        >
+          <KeyRound className="mr-2 size-4" />
+          {savingPassword ? "Saving..." : "Save new password"}
+        </Button>
       </Card>
 
       {/* LOGIN HISTORY / DEVICES LIST (previously used devices) */}
@@ -383,73 +385,76 @@ export function ProfileTabView({
               </div>
             </div>
 
-            {onSignOutAll ? (
-              <Button className="h-10" variant="outline">
+            {/* {onSignOutAll ? (
+              <Button variant="outline">
                 <LogOut className="mr-2 size-4" />
                 Sign out all
               </Button>
-            ) : null}
+            ) : null} */}
+            <Button
+              onClick={() => toast.success("Signed out from all devices")}
+              variant="outline"
+            >
+              <LogOut className="mr-2 size-4" />
+              Sign out all
+            </Button>
           </div>
         </div>
 
         {/* “header row” feel like your screenshot */}
-        <div className="grid grid-cols-1 gap-0 border-t bg-accent/20 px-6 py-4 font-medium text-sm md:grid-cols-4 md:px-8">
-          <div>Device</div>
-          <div>IP address</div>
-          <div>Last login time</div>
-          <div>Time zone</div>
-        </div>
 
-        <div className="divide-y">
-          {sessions.map((s) => (
-            <div
-              className={cn(
-                "grid grid-cols-1 gap-4 px-6 py-5 md:grid-cols-4 md:items-center md:px-8",
-                s.current && "bg-primary/5"
-              )}
-              key={s.id}
-            >
-              <div className="flex items-center gap-3">
-                <div className="inline-flex size-9 items-center justify-center rounded-md bg-muted/50">
-                  <DeviceIcon type={s.deviceType} />
-                </div>
-
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <div className="truncate font-semibold text-sm">
-                      {s.deviceName}
+        <Table>
+          <TableHeader className="gap-0 border-t bg-accent/20 font-medium text-sm">
+            <TableRow>
+              <TableHead className="p-4">Device</TableHead>
+              <TableHead className="p-4">IP address</TableHead>
+              <TableHead className="p-4">Last login time</TableHead>
+              <TableHead className="p-4">Time zone</TableHead>
+              <TableHead />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sessions.map((s) => (
+              <TableRow className={cn(s.current && "bg-primary/5")} key={s.id}>
+                <TableCell className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="inline-flex size-9 items-center justify-center rounded-md bg-muted/50">
+                      <DeviceIcon type={s.deviceType} />
                     </div>
-                    {s.current ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-primary text-xs">
-                        <Check className="size-3" />
-                        Current
-                      </span>
-                    ) : null}
+
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <div className="truncate font-semibold text-sm">
+                          {s.deviceName}
+                        </div>
+                        {s.current ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-primary text-xs">
+                            <Check className="size-3" />
+                            Current
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              <Stat label="IP address" value={s.ipAddress} />
-              <Stat label="Last login time" value={s.lastLoginAt} />
-              <div className="flex items-center justify-between gap-3 md:justify-start">
-                <Stat label="Time zone" value={s.timeZone} />
-
-                {onSignOutSession ? (
+                </TableCell>
+                <TableCell className="p-4">{s.ipAddress ?? "—"}</TableCell>
+                <TableCell className="p-4">{s.lastLoginAt}</TableCell>
+                <TableCell className="p-4">{s.timeZone ?? "—"} </TableCell>
+                <TableCell className="p-4">
                   <Button
-                    className="h-9"
                     disabled={!!s.current}
-                    onClick={() => onSignOutSession(s.id)}
+                    onClick={() => toast.success("Signed out from device")}
                     size="sm"
                     variant="outline"
                   >
                     <LogOut className="mr-2 size-4" />
                     Sign out
                   </Button>
-                ) : null}
-              </div>
-            </div>
-          ))}
-        </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Card>
     </div>
   );

@@ -1,9 +1,10 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { BotLogItem } from "@/types/views/bot";
 import { BotViewCard } from "./bot-view-card";
-import { LogIcon } from "./log-icon";
+import { LogBadge } from "./log-badge";
 
 export function ActivityLog({
   title = "Activity",
@@ -23,7 +24,12 @@ export function ActivityLog({
         <div className="flex items-center gap-2">
           {actions}
           {onClear ? (
-            <Button onClick={onClear} size="sm" variant="outline">
+            <Button
+              disabled={items.length === 0}
+              onClick={onClear}
+              size="sm"
+              variant="outline"
+            >
               <Trash2 className="mr-2 size-4" />
               Clear
             </Button>
@@ -31,28 +37,25 @@ export function ActivityLog({
         </div>
       </div>
 
-      <ScrollArea className="max-h-[calc(100svh-(--spacing(48)))] flex-1 overflow-auto p-3">
+      <ScrollArea className="max-h-[calc(100svh-(--spacing(48)))] flex-1 overflow-auto">
         <div className="space-y-2">
-          {items.length === 0 ? (
-            <div className="rounded-md border border-dashed p-4 text-muted-foreground text-sm">
-              No activity yet.
-            </div>
+          {items.length > 0 ? (
+            <Table>
+              <TableBody>
+                {items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      <LogBadge level={item.level} />
+                    </TableCell>
+                    <TableCell>{item.message}</TableCell>
+                    <TableCell className="flex items-center gap-2">
+                      {item.time}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           ) : null}
-
-          {items.map((x) => (
-            <div
-              className="flex items-start gap-3 rounded-md border bg-card/50 px-3 py-2"
-              key={x.id}
-            >
-              <div className="mt-0.5 shrink-0">
-                <LogIcon level={x.level} />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-muted-foreground text-xs">{x.time}</div>
-                <div className="text-sm">{x.message}</div>
-              </div>
-            </div>
-          ))}
         </div>
       </ScrollArea>
     </BotViewCard>

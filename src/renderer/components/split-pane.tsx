@@ -8,7 +8,7 @@ export function SplitPane({
   right: ReactNode;
 }) {
   return (
-    <div className="grid h-full gap-4 lg:grid-cols-2">
+    <div className="grid h-full gap-4 2xl:grid-cols-2">
       <div className="space-y-4">{left}</div>
       <div className="min-h-130 lg:min-h-0">{right}</div>
     </div>

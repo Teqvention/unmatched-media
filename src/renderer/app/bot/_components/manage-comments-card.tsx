@@ -42,7 +42,7 @@ export function ManageCommentsCard({
           value={text}
         />
         <Button
-          className="bg-emerald-600 hover:bg-emerald-600/90"
+          className="bg-green-600 hover:bg-green-600/90"
           onClick={() => {
             const v = text.trim();
             if (!v) {
@@ -71,7 +71,7 @@ export function ManageCommentsCard({
               className="shrink-0"
               onClick={() => {
                 setItems((p) => p.filter((item) => item.id !== preset.id));
-                onLog("warn", "Comment preset removed.");
+                onLog("warning", "Comment preset removed.");
               }}
               size="icon"
               variant="ghost"

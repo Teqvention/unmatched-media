@@ -4,9 +4,9 @@ import { SplitPane } from "@/components/split-pane";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import type { BotViewTabProps } from "@/types/views/bot";
 import { ActivityLog } from "../_components/activity-log";
 import { BotViewCard } from "../_components/bot-view-card";
-import type { BotViewTabProps } from "../_types/tabs";
 
 export function ManageNewsTabView({ log, clearLog }: BotViewTabProps) {
   return (
@@ -23,7 +23,7 @@ export function ManageNewsTabView({ log, clearLog }: BotViewTabProps) {
           <Textarea className="min-h-40" placeholder="Write your message..." />
 
           <div className="mt-3">
-            <Button className="w-full bg-emerald-600 hover:bg-emerald-600/90">
+            <Button className="w-full bg-green-600 hover:bg-green-600/90">
               Save settings
             </Button>
           </div>

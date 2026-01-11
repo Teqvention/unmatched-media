@@ -29,11 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} max-h-screen w-screen overflow-hidden antialiased`}
       >
         <Providers>
           <AppSidebar />
-          <main className="flex min-h-screen w-full flex-col">
+          <main className="flex h-screen w-full flex-col">
             <BreadcrumbGenerator />
             {children}
           </main>

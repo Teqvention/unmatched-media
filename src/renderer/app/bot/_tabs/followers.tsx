@@ -3,10 +3,10 @@
 import { SplitPane } from "@/components/split-pane";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { BotModuleState, type BotViewTabProps } from "@/types/views/bot";
 import { ActivityLog } from "../_components/activity-log";
 import { BotViewCard } from "../_components/bot-view-card";
 import { StartStop } from "../_components/start-stop";
-import type { BotViewTabProps } from "../_types/tabs";
 
 export function FollowersTabView({
   state,
@@ -29,14 +29,14 @@ export function FollowersTabView({
 
             <StartStop
               onStart={() => {
-                setState((s) => ({ ...s, followers: "running" }));
+                setState((s) => ({ ...s, followers: BotModuleState.Active }));
                 pushLog("info", "Followers scrape started.");
               }}
               onStop={() => {
-                setState((s) => ({ ...s, followers: "on" }));
-                pushLog("warn", "Followers scrape stopped.");
+                setState((s) => ({ ...s, followers: BotModuleState.Inactive }));
+                pushLog("warning", "Followers scrape stopped.");
               }}
-              running={state.followers === "running"}
+              running={state.followers === BotModuleState.Active}
             />
           </div>
 
@@ -47,7 +47,10 @@ export function FollowersTabView({
             onClick={() =>
               setState((s) => ({
                 ...s,
-                followers: s.followers === "off" ? "on" : "off",
+                followers:
+                  s.followers === BotModuleState.Active
+                    ? BotModuleState.Inactive
+                    : BotModuleState.Active,
               }))
             }
             variant="outline"

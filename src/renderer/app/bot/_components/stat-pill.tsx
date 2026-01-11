@@ -19,7 +19,7 @@ export function StatPill({
         <div
           className={cn(
             "font-semibold text-sm",
-            typeof value === "string" ? "truncate" : ""
+            typeof value === "string" ? "truncate capitalize" : ""
           )}
         >
           {value}
