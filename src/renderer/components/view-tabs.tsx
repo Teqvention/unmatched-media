@@ -122,9 +122,7 @@ export function ViewTabs({
           className={cn("w-64 shrink-0 divide-y bg-card", navClassName)}
         >
           <div className="sticky top-0 flex flex-col gap-0 divide-y border-b bg-card">
-            {dropdown !== null ? (
-              <div className="px-4 py-3">{dropdown}</div>
-            ) : null}
+            {dropdown !== null ? <div>{dropdown}</div> : null}
             {tabs.map((t) => {
               const isActive = t.key === currentKey;
 
