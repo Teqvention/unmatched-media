@@ -139,35 +139,68 @@ export function ViewTabs({
               return (
                 <button
                   className={cn(
-                    "tab-button w-full rounded-lg px-3 py-2 text-left transition",
+                    "group relative w-full rounded-lg px-3 py-2 text-left transition",
                     "disabled:cursor-not-allowed disabled:opacity-50",
-                    isActive
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "hover:bg-accent hover:text-accent-foreground"
+                    "hover:bg-foreground/10",
+
+                    // active vs inactive text
+                    isActive ? "text-foreground" : "text-foreground/90"
                   )}
                   disabled={t.disabled}
                   key={t.key}
                   onClick={() => !t.disabled && setKey(t.key)}
                   type="button"
                 >
-                  <div className="flex items-center justify-between gap-3">
+                  {/* Accent rail on the RIGHT, aligned with the nav/content divider */}
+                  <span
+                    className={cn(
+                      "pointer-events-none absolute top-2 -right-2.5 bottom-2 w-0.75 rounded-full",
+                      "transition-opacity",
+                      isActive
+                        ? "bg-primary opacity-100"
+                        : "bg-primary opacity-0"
+                    )}
+                  />
+
+                  {/* Active background (subtle) */}
+                  <div
+                    className={cn(
+                      "absolute inset-0 rounded-lg transition",
+                      isActive ? "bg-foreground/5" : "bg-transparent"
+                    )}
+                  />
+
+                  {/* Content (keep above the overlay) */}
+                  <div className="relative flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-2">
                       {t.icon ? (
-                        <span className="shrink-0">{t.icon}</span>
+                        <span
+                          className={cn(
+                            "shrink-0 transition-colors",
+                            isActive
+                              ? "text-primary"
+                              : "text-muted-foreground group-hover:text-foreground"
+                          )}
+                        >
+                          {t.icon}
+                        </span>
                       ) : null}
+
                       <div className="min-w-0">
                         <div className="truncate font-medium text-sm">
                           {t.label}
                         </div>
                         {t.description ? (
-                          <div className="truncate text-muted-foreground text-xs">
+                          <div className="text-muted-foreground text-xs">
                             {t.description}
                           </div>
                         ) : null}
                       </div>
                     </div>
 
-                    {t.badge ? <div className="shrink-0">{t.badge}</div> : null}
+                    {t.badge ? (
+                      <div className="relative shrink-0">{t.badge}</div>
+                    ) : null}
                   </div>
                 </button>
               );
